@@ -28,9 +28,13 @@ class PDF_MERGE_GUI(tk.Frame):
         pass
     def select_files(self):
         if self.selected_files_v == None:
-            self.selected_files_v = list(tk.filedialog.askopenfilenames())
+            temp = list(tk.filedialog.askopenfilenames())
+            temp.reverse()
+            self.selected_files_v = temp
         else:
-            self.selected_files_v.extend(tk.filedialog.askopenfilenames())
+            temp = list(tk.filedialog.askopenfilenames())
+            temp.reverse()
+            self.selected_files_v.extend(temp)
             
         self.write_on_ui()
         pass
@@ -61,19 +65,21 @@ class PDF_MERGE_GUI(tk.Frame):
                 path += output_file
                 merger = PyPDF2.PdfFileMerger()
                 cnt = 0
+                pageNumber = 0
                 cast_to_int = lambda range_index, split_index : int ( self.range_pages[range_index].split('-')[split_index] )
                 for file in self.selected_files_v:
                     if cnt == 0:
                         border1 = cast_to_int(cnt, 0) - 1 # -1 because start with zero
                         border2 = cast_to_int(cnt, 1)  
                         range_ = (border1, border2)
-                        merger.merge(1, file, pages = range_)
+                        merger.merge(pageNumber, file, pages = range_)
+                        pageNumber = border2
                     else:
-                        pageNumber = cast_to_int(cnt - 1, -1)
                         border1 = cast_to_int(cnt, 0) - 1 # -1 because start with zero
                         border2 = cast_to_int(cnt, 1)       
                         range_ = (border1, border2)
                         merger.merge(pageNumber, file, pages = range_)
+                        pageNumber += border2
                         pass
                     cnt += 1
                 merger.write(path)
