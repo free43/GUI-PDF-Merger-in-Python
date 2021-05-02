@@ -88,9 +88,6 @@ class PDF_MERGE_GUI(tk.Frame):
                 pass
             else:
                 pass
-            
-            
-            
             pass
         pass
 
